@@ -1,0 +1,41 @@
+name: Shorts (Mar, Jue, Sab)
+
+on:
+  schedule:
+    # Martes, Jueves y Sábado a las 12:00 UTC (7:00 AM Colombia)
+    - cron: '0 12 * * 2,4,6'
+  workflow_dispatch:
+
+jobs:
+  generar-short:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout del repositorio
+        uses: actions/checkout@v4
+
+      - name: Configurar Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Instalar FFmpeg
+        run: sudo apt-get update && sudo apt-get install -y ffmpeg
+
+      - name: Instalar dependencias
+        run: |
+          pip install -r requirements.txt
+          pip install python-dotenv groq
+
+      - name: Restaurar archivos secretos
+        run: |
+          echo "${{ secrets.CLIENT_SECRET_B64 }}" | base64 -d > client_secret.json
+          echo "${{ secrets.TOKEN_B64 }}" | base64 -d > youtube_token.pickle
+          echo "GROQ_API_KEY=${{ secrets.GROQ_API_KEY }}" > .env
+          echo "PEXELS_API_KEY=${{ secrets.PEXELS_API_KEY }}" >> .env
+
+      - name: Ejecutar pipeline (Short)
+        run: python pipeline.py
+        env:
+          VIDEO_TYPE: shorts
+          YOUTUBE_UPLOAD: "true"
