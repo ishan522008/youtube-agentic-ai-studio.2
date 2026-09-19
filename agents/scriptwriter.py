@@ -1,23 +1,115 @@
 """
-Script Writer Agent — uses shared Gemini client with model fallback chain.
+Script Writer Agent — Spanish Latin American tutorials about AI for office professionals.
+Uses Groq (via agents.gemini_client) with simple JSON parsing and retries.
+Target duration: 4-6 minutes.
 """
 import json
 import re
+import time
 from agents.gemini_client import generate
 
 
+def _clean_json_response(raw: str) -> str:
+    """Limpia la respuesta del LLM para que sea JSON parseable."""
+    if not raw:
+        return ""
+
+    text = raw.strip()
+
+    text = re.sub(r"^```(?:json)?\s*", "", text, flags=re.IGNORECASE)
+    text = re.sub(r"\s*```\s*$", "", text)
+
+    start = text.find("{")
+    end = text.rfind("}")
+    if start != -1 and end != -1 and end > start:
+        text = text[start:end + 1]
+
+    text = re.sub(r"[\x00-\x08\x0b\x0c\x0e-\x1f]", "", text)
+
+    return text.strip()
+
+def _try_parse_json(raw: str) -> dict:
+    """Intenta parsear el JSON. Si falla, intenta varios arreglos."""
+    cleaned = _clean_json_response(raw)
+
+    # Intento 1: parseo directo
+    try:
+        return json.loads(cleaned)
+    except json.JSONDecodeError as e:
+        print(f"   JSON error en intento 1: {e}")
+
+    # Intento 2: arreglar saltos de linea mal escapados (\n dentro de strings)
+    try:
+        # Reemplazar \n literales (no escapados) dentro de strings por \\n
+        # Busca: dentro de strings, todo \n que NO vaya precedido de \\
+        fixed = re.sub(
+            r'(?<!\\)\\n',
+            r'\\\\n',
+            cleaned
+        )
+        return json.loads(fixed)
+    except json.JSONDecodeError as e:
+        print(f"   JSON error en intento 2: {e}")
+
+    # Intento 3: reemplazar \n por espacio (más agresivo)
+    try:
+        # Dentro de strings, reemplazar saltos de línea literales por espacios
+        fixed = re.sub(r'(?<!\\)\n', ' ', cleaned)
+        # Y también arreglar \n escapados
+        fixed = re.sub(r'(?<!\\)\\n', ' ', fixed)
+        return json.loads(fixed)
+    except json.JSONDecodeError as e:
+        print(f"   JSON error en intento 3: {e}")
+
+    # Intento 4: quitar comas finales antes de } o ]
+    try:
+        fixed = re.sub(r",\s*([}\]])", r"\1", cleaned)
+        return json.loads(fixed)
+    except json.JSONDecodeError as e:
+        print(f"   JSON error en intento 4: {e}")
+
+    # Intento 5: combinar los arreglos anteriores
+    try:
+        fixed = re.sub(r'(?<!\\)\\n', ' ', cleaned)
+        fixed = re.sub(r'(?<!\\)\n', ' ', fixed)
+        fixed = re.sub(r",\s*([}\]])", r"\1", fixed)
+        return json.loads(fixed)
+    except json.JSONDecodeError as e:
+        print(f"   JSON error en intento 5: {e}")
+
+    # Guardar JSON crudo para debug
+    try:
+        with open("debug_last_script.txt", "w", encoding="utf-8") as f:
+            f.write(raw)
+        print("   JSON crudo guardado en debug_last_script.txt")
+    except Exception:
+        pass
+
+    raise ValueError(
+        f"No se pudo parsear el JSON.\n"
+        f"Primeros 500 caracteres:\n{cleaned[:500]}"
+    )
+
 def write_script(research: dict, video_type: str = "normal") -> dict:
     """
-    Generates a narrated script for a YouTube video or YouTube Short.
-    video_type: "normal" (6-8 min, 9 sections) | "shorts" (50-60 sec, 3 sections)
-    Returns structured JSON with sections, each containing narration + image_query.
+    Genera un guion narrado para YouTube.
+    video_type: "normal" (4-6 min, 9 secciones) | "shorts" (50-60 seg, 3 secciones)
     """
     if video_type == "shorts":
         return _write_shorts_script(research)
 
     key_points_str = "\n".join(f"  {i+1}. {p}" for i, p in enumerate(research["key_points"]))
 
-    prompt = f"""You are the lead scriptwriter for a viral science YouTube channel (think Kurzgesagt, Veritasium, Vsauce).
+    prompt = f"""Eres el guionista principal de un canal de YouTube en ESPANOL LATINOAMERICANO sobre tutoriales practicos de inteligencia artificial para profesionales de oficina (analistas, administrativos, managers, emprendedores).
+
+REGLA CRITICA DE IDIOMA: TODA la narracion, titulos de seccion y descripcion DEBEN estar en ESPANOL de Latinoamerica. Los unicos campos que van en ingles son image_query, image_query_2, image_query_3.
+
+REGLA CRITICA DE DURACION: El video completo DEBE durar entre 2.5 y 3.5 minutos. Esto significa 400-500 palabras TOTALES. Cada narracion individual DEBE tener entre 40 y 60 palabras (3-4 frases completas).
+
+REGLA CRITICA DE JSON:
+- NUNCA uses comillas dobles dentro de los strings del JSON.
+- NUNCA uses saltos de linea (\n o \n\n) dentro de ningun string del JSON. Ni en description, ni en narration, ni en ningun campo. Todo el texto de un campo va en UNA SOLA LINEA.
+- El JSON debe ser 100% valido.
 
 Video topic: {research["topic"]}
 Title: {research["video_title"]}
@@ -25,205 +117,205 @@ Core hook question: {research.get("hook_question", "")}
 Key points to cover:
 {key_points_str}
 
-Write a GRIPPING, cinematic 6-8 minute script. Non-negotiable rules:
+Escribe un guion PRACTICO y DINAMICO de 4-6 minutos.
 
-PACING RULES (survival against the YouTube 2-minute drop):
-- Section 4 MUST open with a pattern-break re-hook: "But here's where it gets REALLY weird…"
-  or "Wait — everything I just told you is only HALF the story." This re-hooks viewers at ~90s.
-- Section 6 MUST open with a second re-hook: a sudden gear-shift ("So why does any of this matter?
-  Let me show you something that will change how you see the world.") This catches the 3-min drop.
-- Use OPEN LOOPS: pose a specific question in section 2 or 3 ("You might wonder: X.") and answer
-  it in section 5 or 6 — this forces viewers to stay for the payoff.
-- Vary sentence length: punchy 4-word sentences followed by longer ones. Never three long sentences in a row.
-- Use "But wait.", "Here's the thing.", "Stay with me." to reset attention.
+REGLAS DE RITMO:
+- Seccion 4 DEBE abrir con un re-hook: "Pero espera, aqui esta el truco que nadie te dice..."
+- Seccion 6 DEBE abrir con un segundo re-hook: "Ahora te muestro como aplicar esto en TU trabajo HOY..."
+- Plantea una pregunta en la seccion 2 y respondela en la seccion 5.
 
-VISUAL RULES:
-- Each section needs 3 distinct image queries (image_query, image_query_2, image_query_3).
-  These are used for B-roll cuts every 8-12 seconds within the section. Make them visually different:
-  wide shot → close-up → abstract or concept art. NOT three variations of the same thing.
+REGLAS VISUALES (image_query en ingles para Pexels):
+- Cada seccion necesita 3 busquedas de imagen DISTINTAS y CONCRETAS.
+- Ejemplos: "excel spreadsheet", "office desk laptop", "AI chat interface", "business meeting", "data analytics dashboard".
+- NUNCA uses terminos abstractos.
 
-Respond with ONLY a valid JSON object. No markdown fences, no extra text:
+Responde SOLO con un objeto JSON valido. Sin markdown, sin texto extra:
 
 {{
   "title": "{research['video_title']}",
-  "description": "{research.get('description', '')}",
+  "description": "Descripcion del video en UNA SOLA LINEA, sin saltos de linea, 2-3 frases, con la palabra clave principal al inicio.",
   "tags": {json.dumps(research.get('tags', []))},
   "sections": [
     {{
       "id": 1,
       "section_type": "hook",
-      "title": "Short, punchy on-screen title — NOT 'The Hook'",
-      "narration": "Open with an impossible statement or visceral question that stops the scroll. 3-4 sentences. End on an open question that section 2 will tease but section 5 will answer.",
-      "image_query": "dramatic wide establishing shot matching the topic",
-      "image_query_2": "close-up detail or human reaction shot",
-      "image_query_3": "abstract or cosmic concept matching the mood",
+      "title": "Titulo corto y potente",
+      "narration": "Escribe 4-6 frases completas (60-90 palabras) que enganchen al espectador. Primera frase: declaracion provocadora. Ultima: pregunta abierta que se responde en la seccion 5.",
+      "image_query": "excel spreadsheet data analysis",
+      "image_query_2": "person frustrated at computer office",
+      "image_query_3": "AI chat interface screen closeup",
       "bullet_points": [],
-      "caption_text": "Short punchy caption shown on screen",
-      "duration_seconds": 25
+      "caption_text": "",
+      "duration_seconds": 45
     }},
     {{
       "id": 2,
       "section_type": "intro",
-      "title": "On-screen title — NOT 'Setting the Stage'",
-      "narration": "Establish context and scale. Pose the open-loop question explicitly: 'Here is the question we need to answer: [question].' Promise the viewer the answer is coming and it will change everything. 4-5 sentences.",
-      "image_query": "scale or size comparison dramatic wide shot",
-      "image_query_2": "scientists or researchers at work close-up",
-      "image_query_3": "data visualization or diagram concept",
-      "bullet_points": ["The open question we will answer", "Why the scale matters", "What most people get wrong"],
-      "caption_text": "What we'll explore today",
-      "duration_seconds": 40
+      "title": "Titulo en pantalla",
+      "narration": "Escribe 4-6 frases completas (60-90 palabras). Contexto del problema. Pregunta open-loop explicita. Promesa de lo que viene.",
+      "image_query": "business professional using laptop",
+      "image_query_2": "excel spreadsheet numbers screen",
+      "image_query_3": "data analytics dashboard charts",
+      "bullet_points": [],
+      "caption_text": "",
+      "duration_seconds": 45
     }},
     {{
       "id": 3,
       "section_type": "content",
-      "title": "On-screen title — NOT 'First Revelation'",
-      "narration": "First deep explanation. Use a concrete analogy ('Imagine if…'). Build simple → complex. 5-7 sentences. End with a setup that makes section 4 feel inevitable.",
-      "image_query": "specific concept matching this section — dramatic wide",
-      "image_query_2": "close-up detail of the concept",
-      "image_query_3": "abstract or metaphorical visual for the analogy used",
-      "bullet_points": ["Core fact A", "Core fact B — the surprising part"],
-      "caption_text": "The first mind-blowing fact",
-      "duration_seconds": 70
+      "title": "Titulo en pantalla",
+      "narration": "Escribe 5-7 frases completas (70-95 palabras). Primera frase: analogia concreta. Siguientes: como funciona paso a paso. Ejemplo real.",
+      "image_query": "hands typing on laptop keyboard closeup",
+      "image_query_2": "excel formulas spreadsheet closeup",
+      "image_query_3": "person working office desk screen",
+      "bullet_points": [],
+      "caption_text": "",
+      "duration_seconds": 50
     }},
     {{
       "id": 4,
       "section_type": "re_hook",
-      "title": "On-screen title — a gear-shift title like 'But Wait.' or 'The Twist Nobody Sees'",
-      "narration": "MANDATORY: Open with a re-hook line like 'But here's where it gets REALLY weird…' or 'Wait — everything I just said is only half the story.' Then deliver the counterintuitive twist. The viewer who almost dropped off at 90 seconds just got pulled back. 5-7 sentences.",
-      "image_query": "dramatic reveal or twist — light breaking through darkness",
-      "image_query_2": "shocked or awed human expression or reaction",
-      "image_query_3": "abstract visual representing a paradigm shift",
-      "bullet_points": ["What you thought was true", "What is actually true — the twist"],
-      "caption_text": "Nothing is what it seems",
-      "duration_seconds": 70
+      "title": "Pero Aqui Viene Lo Bueno",
+      "narration": "Escribe 5-7 frases completas (70-95 palabras). Primera frase DEBE empezar con 'Pero espera, aqui esta el truco que nadie te dice...' Siguientes: el giro contraintuitivo.",
+      "image_query": "light bulb moment idea closeup",
+      "image_query_2": "surprised person laptop screen",
+      "image_query_3": "AI assistant interface glowing screen",
+      "bullet_points": [],
+      "caption_text": "",
+      "duration_seconds": 50
     }},
     {{
       "id": 5,
       "section_type": "content",
-      "title": "On-screen title — NOT 'Going Deeper'",
-      "narration": "The deeper layer. MANDATORY: answer the open-loop question posed in section 2 here. 'Remember the question I asked earlier? Here is the answer — and it's stranger than you imagined.' Then the implications. 5-7 sentences.",
-      "image_query": "the answer or resolution concept — dramatic and clear",
-      "image_query_2": "scientific or mathematical concept close-up",
-      "image_query_3": "wide cosmic or civilizational scale shot",
-      "bullet_points": ["The answer to the open question", "Implication A", "Implication B"],
-      "caption_text": "The rabbit hole goes deeper",
-      "duration_seconds": 70
+      "title": "Titulo en pantalla",
+      "narration": "Escribe 5-7 frases completas (70-95 palabras). Primera frase: respuesta a la pregunta open-loop de la seccion 2. Siguientes: como aplicarlo paso a paso.",
+      "image_query": "AI prompt typed on screen closeup",
+      "image_query_2": "excel data transformation before after",
+      "image_query_3": "professional presenting data screen",
+      "bullet_points": [],
+      "caption_text": "",
+      "duration_seconds": 50
     }},
     {{
       "id": 6,
       "section_type": "re_hook",
-      "title": "On-screen title — a second gear-shift like 'And It Gets Worse.' or 'The Part Nobody Talks About'",
-      "narration": "MANDATORY: Second re-hook at the 3-minute mark. Open with a sudden gear-shift: 'So why does any of this actually matter? Let me show you something that changes everything.' Then hit the real-world human stakes hard. 5-6 sentences.",
-      "image_query": "human civilization or society wide shot dramatic",
-      "image_query_2": "technology or infrastructure close-up",
-      "image_query_3": "individual human face or hands — personal scale",
-      "bullet_points": ["Why this affects YOU personally", "The consequence most people ignore", "What happens if we do nothing"],
-      "caption_text": "What this means for all of us",
-      "duration_seconds": 65
+      "title": "Y Ahora Lo Importante",
+      "narration": "Escribe 5-7 frases completas (70-95 palabras). Primera frase DEBE empezar con 'Ahora te muestro como aplicar esto en TU trabajo HOY...' Siguientes: impacto practico en el dia a dia.",
+      "image_query": "office worker productive computer",
+      "image_query_2": "hand clicking mouse computer",
+      "image_query_3": "professional saving time dashboard",
+      "bullet_points": [],
+      "caption_text": "",
+      "duration_seconds": 50
     }},
     {{
       "id": 7,
       "section_type": "content",
-      "title": "On-screen title — a philosophical or existential angle",
-      "narration": "The existential dimension. Make the viewer feel the scale of what this means. What question does this leave unanswered? What do the smartest experts disagree on? 4-6 sentences. End with a rhetorical question that leads into the conclusion.",
-      "image_query": "cosmos or infinite space — awe-inspiring wide",
-      "image_query_2": "lone human figure against vast landscape or sky",
-      "image_query_3": "philosophical or abstract concept — light or shadow",
-      "bullet_points": ["The big unanswered question", "What experts disagree on"],
-      "caption_text": "The question that keeps scientists up at night",
-      "duration_seconds": 60
+      "title": "Titulo en pantalla",
+      "narration": "Escribe 4-6 frases completas (60-90 palabras). Angulo aspiracional para la carrera del espectador. Pregunta retorica que lleve a la conclusion.",
+      "image_query": "professional career growth laptop",
+      "image_query_2": "modern office team working",
+      "image_query_3": "futuristic AI workplace concept",
+      "bullet_points": [],
+      "caption_text": "",
+      "duration_seconds": 45
     }},
     {{
       "id": 8,
       "section_type": "conclusion",
-      "title": "On-screen title — a satisfying payoff title",
-      "narration": "Bring it home. Three punchy takeaways. Callback to the opening hook ('Remember how I asked…? Now you know.'). End with a direct question for the comments — one that every viewer has a personal answer to.",
-      "image_query": "hope or breakthrough — light emerging from darkness",
-      "image_query_2": "discovery or revelation — close-up of something revealed",
-      "image_query_3": "forward-looking future technology or cosmos",
-      "bullet_points": ["Core truth #1 — punchy and memorable", "Core truth #2 — the twist payoff", "Core truth #3 — the call to think"],
-      "caption_text": "What have we learned?",
-      "duration_seconds": 50
+      "title": "Titulo en pantalla",
+      "narration": "Escribe 4-6 frases completas (60-90 palabras). Conclusion clave con callback al hook inicial. Pregunta directa para comentarios.",
+      "image_query": "success achievement laptop celebration",
+      "image_query_2": "person satisfied working computer",
+      "image_query_3": "forward looking future office technology",
+      "bullet_points": [],
+      "caption_text": "",
+      "duration_seconds": 45
     }},
     {{
       "id": 9,
       "section_type": "cta",
-      "title": "On-screen title — e.g. 'Join the Journey'",
-      "narration": "We drop a new mind-bending video every week. If this changed how you see the world, subscribe — and hit the bell so you never miss one. Drop your answer in the comments: [specific question from the video]. I read every single one.",
-      "image_query": "space stars infinite universe night sky",
-      "image_query_2": "community or crowd united by curiosity",
-      "image_query_3": "cosmic overview shot — earth from space",
+      "title": "Unete al Canal",
+      "narration": "Escribe 3-4 frases completas (40-60 palabras). Invitacion a suscribirse. Pregunta especifica para comentarios.",
+      "image_query": "youtube subscribe button animation",
+      "image_query_2": "audience community engagement screen",
+      "image_query_3": "laptop with youtube channel dashboard",
       "bullet_points": [],
-      "caption_text": "New video every week",
-      "duration_seconds": 18
+      "caption_text": "",
+      "duration_seconds": 30
     }}
   ]
 }}
 
-IMPORTANT:
-- image_query / image_query_2 / image_query_3 must be VISUALLY DISTINCT from each other (wide → close → abstract).
-- Use SPECIFIC Pexels search strings (e.g. "black hole accretion disk simulation" not just "space").
-- Narration for sections 4 and 6 MUST start with the mandatory re-hook lines as described.
-- The open-loop question from section 2 MUST be answered in section 5.
-- Every narration field must contain COMPLETE, broadcast-ready sentences — no placeholders.
-- The entire script must feel like Kurzgesagt wrote it: cinematic, urgent, human."""
+IMPORTANTE FINAL:
+- Cada narracion DEBE tener 60-90 palabras (4-6 frases completas).
+- El video total DEBE sumar 600-800 palabras.
+- La pregunta open-loop de la seccion 2 DEBE responderse en la seccion 5.
+- TODO el contenido en ESPANOL LATINOAMERICANO excepto los image_query.
+- NUNCA uses comillas dobles dentro de strings del JSON."""
 
-    print("   → Writing script with Gemini...")
-    raw = generate(prompt)
-    raw = re.sub(r"^```(?:json)?", "", raw).strip()
-    raw = re.sub(r"```$", "", raw).strip()
+    last_error = None
+    for attempt in range(3):
+        try:
+            print("   Writing script with Groq...")
+            raw = generate(prompt)
+            script = _try_parse_json(raw)
 
-    match = re.search(r"\{[\s\S]*\}", raw)
-    if not match:
-        raise ValueError(f"Scriptwriter returned no JSON.\n\nRaw:\n{raw[:600]}")
+            if "sections" not in script or len(script["sections"]) < 4:
+                raise ValueError("Script returned too few sections.")
 
-    script = json.loads(match.group())
+            total_words = sum(len(s.get("narration", "").split()) for s in script["sections"])
+            print(f"   Total palabras: {total_words}")
+            print(f"   Duracion estimada: {total_words / 150:.2f} minutos")
 
-    if "sections" not in script or len(script["sections"]) < 4:
-        raise ValueError("Script returned too few sections.")
+            return script
 
-    return script
+        except Exception as e:
+            last_error = e
+            if attempt < 2:
+                print(f"   Error en intento {attempt + 1}/3: {e}")
+                print(f"   Reintentando en 3 segundos...")
+                time.sleep(3)
+            else:
+                print(f"   Fallo despues de 3 intentos.")
+
+    raise ValueError(f"Scriptwriter fallo tras 3 intentos.\nUltimo error:\n{last_error}")
 
 
 def _write_shorts_script(research: dict) -> dict:
-    """
-    Generates a tight 50-60 second YouTube Shorts script (3 sections, vertical format).
-    """
+    """Genera un guion compacto de 50-60 segundos para YouTube Shorts."""
     key_points_str = "\n".join(f"  {i+1}. {p}" for i, p in enumerate(research["key_points"][:3]))
 
-    prompt = f"""You are a viral YouTube Shorts scriptwriter. You write punchy, addictive 50-60 second vertical videos.
+    prompt = f"""Eres un guionista viral de YouTube Shorts en ESPANOL LATINOAMERICANO.
+
+REGLA CRITICA DE JSON: NUNCA uses comillas dobles dentro de strings.
 
 Video topic: {research["topic"]}
 Title: {research["video_title"]}
-Hook question: {research.get("hook_question", "")}
 Key points:
 {key_points_str}
 
-Write a GRIPPING 50-60 second Shorts script. Rules:
-- Hooks in the FIRST 3 words — no slow intros
-- Short, punchy sentences. Every second counts.
-- Vertical video style: one idea per second
-- End with a cliffhanger or question that forces them to follow/subscribe
-- 3 sections ONLY: hook (10-12s), revelation (30-35s), cta (8-10s)
-- Total narration must be 120-160 words maximum
-- NEVER name the section in the title field — title is INTERNAL only, not shown on screen
+Escribe un guion GRIPANTE de 50-60 segundos. Reglas:
+- Hook en las PRIMERAS 3 palabras
+- 3 secciones: hook (10-12s), revelacion (30-35s), cta (8-10s)
+- Narracion total: 120-160 palabras
 
-Respond with ONLY a valid JSON object. No markdown fences, no extra text:
+Responde SOLO con JSON valido:
 
 {{
   "title": "{research['video_title']} #Shorts",
-  "description": "Short, punchy 2-sentence description for the Short.",
+  "description": "Descripcion corta de 2 frases, en espanol.",
   "tags": {json.dumps(research.get('tags', []) + ["Shorts", "YouTubeShorts"])},
   "sections": [
     {{
       "id": 1,
       "section_type": "hook",
       "title": "hook_internal",
-      "narration": "Open with a jaw-dropping 1-sentence statement. Then the question. 2-3 punchy sentences MAX. About 30-35 words.",
-      "image_query": "dramatic space cosmos universe dark",
-      "image_query_2": "explosion supernova nebula vivid",
-      "image_query_3": "earth from space satellite view",
-      "image_query_4": "black hole gravitational waves",
+      "narration": "UNA frase impactante de maximo 15 palabras.",
+      "image_query": "excel spreadsheet closeup data",
+      "image_query_2": "AI chat interface glowing screen",
+      "image_query_3": "person typing laptop office",
+      "image_query_4": "business dashboard analytics screen",
       "bullet_points": [],
       "caption_text": "",
       "duration_seconds": 12
@@ -232,11 +324,11 @@ Respond with ONLY a valid JSON object. No markdown fences, no extra text:
       "id": 2,
       "section_type": "content",
       "title": "content_internal",
-      "narration": "The core mind-blowing fact, explained in 3-4 punchy sentences. No fluff. Drive home the ONE key insight. About 80-90 words.",
-      "image_query": "relevant scientific dramatic image cinematic",
-      "image_query_2": "laboratory science experiment glowing",
-      "image_query_3": "futuristic technology neon abstract",
-      "image_query_4": "human brain neuron synapse close up",
+      "narration": "DOS frases cortas, maximo 30 palabras.",
+      "image_query": "excel formulas screen closeup",
+      "image_query_2": "AI assistant typing prompt",
+      "image_query_3": "data transformation charts",
+      "image_query_4": "professional working laptop screen",
       "bullet_points": [],
       "caption_text": "",
       "duration_seconds": 35
@@ -245,38 +337,37 @@ Respond with ONLY a valid JSON object. No markdown fences, no extra text:
       "id": 3,
       "section_type": "cta",
       "title": "cta_internal",
-      "narration": "Drop one final mind-bending teaser, then tell them to follow for more facts that break their brain. 15-20 words.",
-      "image_query": "stars infinite cosmos night sky milky way",
-      "image_query_2": "galaxy spiral arms nebula purple",
-      "image_query_3": "universe deep field stars",
-      "image_query_4": "space telescope distant galaxies",
+      "narration": "UNA frase corta de maximo 15 palabras.",
+      "image_query": "youtube subscribe button",
+      "image_query_2": "office desk laptop productivity",
+      "image_query_3": "AI workplace technology concept",
+      "image_query_4": "person smiling at computer",
       "bullet_points": [],
       "caption_text": "",
       "duration_seconds": 10
     }}
   ]
-}}
+}}"""
 
-IMPORTANT:
-- Total narration across ALL sections: 120-160 words maximum
-- Each section narration must be complete, broadcast-ready sentences
-- image_query and image_query_2/3/4 must all be DIFFERENT specific Pexels visual search strings
-- title fields are INTERNAL labels only — they are never shown on screen"""
+    last_error = None
+    for attempt in range(3):
+        try:
+            print("   Writing Shorts script with Groq...")
+            raw = generate(prompt)
+            script = _try_parse_json(raw)
 
-    print("   → Writing Shorts script with Gemini...")
-    raw = generate(prompt)
-    raw = re.sub(r"^```(?:json)?", "", raw).strip()
-    raw = re.sub(r"```$", "", raw).strip()
+            if "sections" not in script or len(script["sections"]) < 2:
+                raise ValueError("Shorts script returned too few sections.")
 
-    match = re.search(r"\{[\s\S]*\}", raw)
-    if not match:
-        raise ValueError(f"Shorts scriptwriter returned no JSON.\n\nRaw:\n{raw[:600]}")
+            script["video_type"] = "shorts"
+            return script
 
-    script = json.loads(match.group())
+        except Exception as e:
+            last_error = e
+            if attempt < 2:
+                print(f"   Error en intento {attempt + 1}/3: {e}")
+                time.sleep(3)
+            else:
+                print(f"   Fallo despues de 3 intentos.")
 
-    if "sections" not in script or len(script["sections"]) < 2:
-        raise ValueError("Shorts script returned too few sections.")
-
-    # Tag it so the video creator knows
-    script["video_type"] = "shorts"
-    return script
+    raise ValueError(f"Shorts scriptwriter fallo tras 3 intentos.\nUltimo error:\n{last_error}")

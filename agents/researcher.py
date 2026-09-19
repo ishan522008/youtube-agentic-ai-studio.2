@@ -25,18 +25,14 @@ _BUILTIN_BANNED = [
 
 # All available focus angles — used by researcher AND exposed to the GUI
 FOCUS_ANGLES = [
-    "Theoretical Physics & Time Travel",
-    "The Dark Forest Theory & Aliens",
-    "Existential Human Psychology & Illusions",
-    "Frightening AI Futures & Simulation Theory",
-    "Mind-bending Mathematical Paradoxes",
-    "The limits of Human Biology & Immortality",
-    "Quantum Mechanics & Alternate Realities",
-    "Cosmic scale, Black Holes, and the end of the Universe",
-    "Neuroscience & the Mystery of Consciousness",
-    "Ancient Civilisations & Lost History",
-    "Cutting-edge Biotechnology & Genetic Engineering",
-    "The Future of Space Colonisation",
+    "IA para automatizar Excel y reportes de oficina",
+    "Herramientas de IA para análisis de datos sin programar",
+    "Prompts y trucos de ChatGPT para profesionales",
+    "Claude y NotebookLM aplicados al trabajo diario",
+    "Automatización de tareas administrativas con IA",
+    "Copilot y asistentes IA para productividad",
+    "IA para redactar correos, informes y presentaciones",
+    "Casos reales de IA en empresas hispanohablantes",
 ]
 
 

@@ -18,13 +18,14 @@ ELEVENLABS_API_KEY = os.getenv("ELEVENLABS_API_KEY", "YOUR_ELEVENLABS_KEY")  # o
 #  The more specific you are, the better the AI's topic suggestions.
 # ─────────────────────────────────────────
 CHANNEL_DESCRIPTION = """
-A mind-bending science and technology channel in the style of Vsauce, Veritasium, and Kurzgesagt.
-We focus heavily on deep, existential "What If" scenarios, the extreme future of Artificial Intelligence,
-theoretical physics, and mind-expanding thought experiments.
-Every video should explore the absolute limits of science, space, or tech, making the viewer question reality.
-Target audience: highly curious thinkers who want their minds blown by deep scientific and philosophical dives.
+Canal de tutoriales prácticos de inteligencia artificial para profesionales de oficina que NO saben programar.
+Enseñamos a usar herramientas de IA (ChatGPT, Claude, NotebookLM, Copilot, Julius AI) para automatizar
+tareas reales: análisis de Excel, redacción de informes, investigación de datos, reportes ejecutivos.
+Cada video muestra un caso de uso concreto, paso a paso, que el espectador puede aplicar en su trabajo el mismo día.
+Target audience: analistas, administrativos, managers y emprendedores hispanohablantes que usan Excel a diario
+y quieren ahorrar horas con IA. Tono: claro, directo, práctico, sin jerga técnica.
 """
-CHANNEL_NAME = "My AI Channel"   # shown on-screen and in upload metadata
+CHANNEL_NAME = "IA Práctica"   # shown on-screen and in upload metadata
 
 # ─────────────────────────────────────────
 #  Voice (Edge TTS — free, no API key)
@@ -34,10 +35,9 @@ CHANNEL_NAME = "My AI Channel"   # shown on-screen and in upload metadata
 #    en-US-BrianNeural    — US, calm, documentary
 #    en-US-GuyNeural      — US, clear, neutral
 # ─────────────────────────────────────────
-VOICE_ID    = "en-US-AndrewNeural"
-VOICE_RATE  = "-5%"     # slow down slightly for narration feel
-VOICE_PITCH = "-3Hz"    # slightly deeper = more cinematic
-
+VOICE_ID    = "es-MX-JorgeNeural"
+VOICE_RATE  = "+15%"
+VOICE_PITCH = "+0Hz"
 # ─────────────────────────────────────────
 #  AI Model
 #  Starting model for the fallback chain — the system auto-switches
@@ -50,7 +50,7 @@ VOICE_PITCH = "-3Hz"    # slightly deeper = more cinematic
 #    gemini-2.0-flash-lite   — fastest           (1500 req/day)
 #    gemini-1.5-flash-001    — reliable fallback (1500 req/day)
 # ─────────────────────────────────────────
-GEMINI_MODEL = "gemini-2.0-flash"
+GEMINI_MODEL = "openai/gpt-oss-120b"
 
 # ─────────────────────────────────────────
 #  Video Dimensions

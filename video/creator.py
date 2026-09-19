@@ -219,7 +219,7 @@ def _draw_lower_third(frame, caption, alpha, section_title=""):
         od.text((30, bar_y + 8), section_title.upper(),
                 font=_load_font("regular", 22), fill=(*C["accent"], int(200 * alpha)))
     if caption:
-        od.text((30, bar_y + 36), caption[:80],
+        od.text((30, bar_y + 36), caption[:140],
                 font=_load_font("bold", 34), fill=(*C["white"], int(255 * alpha)))
     return Image.alpha_composite(frame.convert("RGBA"), overlay).convert("RGB")
 
@@ -228,7 +228,7 @@ def _draw_lower_third(frame, caption, alpha, section_title=""):
 #  NORMAL VIDEO — SRT CAPTION OVERLAY
 # ══════════════════════════════════════════════════════════════
 
-NORMAL_CAP_FONT_SIZE = 36       # smaller than Shorts (56px) — 1920×1080 context
+NORMAL_CAP_FONT_SIZE = 32       # smaller than Shorts (56px) — 1920×1080 context
 NORMAL_CAP_BG        = (0, 0, 0, 160)   # semi-transparent dark pill
 NORMAL_CAP_FG        = (255, 255, 255)
 NORMAL_CAP_MARGIN_B  = 90       # px from bottom (above progress bar)
@@ -293,7 +293,7 @@ def _render_hook(draw, section, t, duration):
     title = section.get("title", "")
     if t > 0.3:
         a = min(1.0, (t - 0.3) / 0.4)
-        _shadow_text(draw, (60, 50), "▶ FRACTURED TIMELINES",
+        _shadow_text(draw, (60, 50), "▶ IA PRÁCTICA",
                      _load_font("regular", 24), fill=_alpha(C["accent"], a), shadow_offset=2)
     sentences = [s.strip() for s in narr.replace("...", "…").split(".") if s.strip()]
     first_two = ". ".join(sentences[:2]) + ("." if sentences else "")
@@ -489,7 +489,7 @@ def _make_clip(section, duration, bg_images, section_num, total_sections,
         cap_alpha = 0.0
         if t > 1.5:
             cap_alpha = min(1.0, (t - 1.5) / 0.6)
-        frame = _draw_lower_third(frame, caption, cap_alpha, title)
+       # frame = _draw_lower_third(frame, caption, cap_alpha, title)
 
         # ── SRT subtitle cue (bottom-centre, 36px) ────────────────────────
         if captions:
@@ -538,7 +538,7 @@ def _crossfade(clip_a, clip_b, fade_dur=0.8):
 SHORTS_IMG_DURATION = 2.5   # seconds of visible time per image (before fade)
 
 # Caption styling
-CAP_BG        = (0, 0, 0, 180)
+CAP_BG        = (10, 10, 25, 200)
 CAP_FG        = (255, 255, 255)
 CAP_FONT_SIZE = 56           # large for vertical mobile viewing
 
