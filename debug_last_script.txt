@@ -1,0 +1,116 @@
+{
+  "title": "Nunca más pierdas un deal: 3 prompts de IA para seguir up",
+  "description": "Descubre tres prompts de inteligencia artificial para redactar correos de seguimiento automáticos y efectivos. Aprende a eliminar la barrera emocional y aumentar tus cierres con técnicas de escritura asistida.",
+  "tags": [
+    "prompts chatgpt",
+    "automatización correo",
+    "productividad oficina",
+    "ventas con ia",
+    "redacción comercial",
+    "chatgpt para negocios",
+    "gestión de contactos",
+    "herramientas ia"
+  ],
+  "sections": [
+    {
+      "id": 1,
+      "section_type": "hook",
+      "title": "El fin de la sequía",
+      "narration": "Deja de sufrir escribiendo correos que nadie lee. La mayoría de los profesionales pierden oportunidades no por falta de producto, sino por timidez en el seguimiento. ¿Y si la IA podía hacer el trabajo sucio por ti? Imagina enviar mensajes con la persistencia de un humano, pero sin el estrés. Hoy te mostraré cómo lograrlo con tres técnicas específicas. Pero antes, pregúntate: ¿cuál es el mayor obstáculo al momento de hacer el follow-up?",
+      "image_query": "business person looking at laptop screen stressed",
+      "image_query_2": "empty inbox computer screen closeup",
+      "image_query_3": "AI artificial intelligence head glowing blue",
+      "bullet_points": [],
+      "caption_text": "",
+      "duration_seconds": 45
+    },
+    {
+      "id": 2,
+      "section_type": "intro",
+      "title": "El problema del sesgo emocional",
+      "narration": "El miedo a molestar al cliente es el factor número uno que frena ventas. Muchos administrativos y managers evitan escribir el segundo o tercer correo por inseguridad. Esta parálisis por análisis nos hace perder deals que ya estaban ganados. En los próximos minutos resolveremos esta duda. Verás cómo estructurar prompts para que la IA elimine ese sesgo humano y te de opciones balanzadas. Además, dominarás el arte de la persistencia inteligente sin parecer insistente.",
+      "image_query": "person hesitating before typing on keyboard",
+      "image_query_2": "calendar with pending tasks red flags",
+      "image_query_3": "hand holding pen thinking over email draft",
+      "bullet_points": [],
+      "caption_text": "",
+      "duration_seconds": 45
+    },
+    {
+      "id": 3,
+      "section_type": "content",
+      "title": "Prompt 1: Contexto Inteligente",
+      "narration": "Piensa en la IA como un espejo crítico, no solo como un redactor. El primer prompt se llama Contexto Inteligente. Le pides a la IA que actúe como un cliente frustrado por la espera. Tu tarea es pedirle que revise tu borrador y te diga dónde suenas agresivo o pálido. Este paso te da una radiografía instantánea de tu tono. Es como tener un editor senior revisando tu trabajo en segundos. Ahora puedes ajustar antes de enviar, no después de que el cliente se enoje.",
+      "image_query": "two people shaking hands business agreement",
+      "image_query_2": "mirror reflection of a person typing",
+      "image_query_3": "critical review comments on digital document",
+      "bullet_points": [],
+      "caption_text": "",
+      "duration_seconds": 50
+    },
+    {
+      "id": 4,
+      "section_type": "re_hook",
+      "title": "La Escalada Tónica",
+      "narration": "Pero espera, aquí está el truco que nadie te dice. La mayoría solo pide un correo genérico cada vez. Eso es un error estratégico enorme. El segundo prompt se llama Escalada Tónica. Le indicas a la IA que genere tres variaciones: una suave, una acentuada y una directa. La clave es basarlo en cuántos días han pasado desde el último contacto. Así eliges la temperatura emocional correcta sin reescribir nada desde cero. Es tener tres opciones de indumentaria para la misma reunión, la elegancia reside en el contexto.",
+      "image_query": "three different color shirts on hangers",
+      "image_query_2": "thermometer showing different temperature levels",
+      "image_query_3": "email draft with multiple version options screen",
+      "bullet_points": [],
+      "caption_text": "",
+      "duration_seconds": 50
+    },
+    {
+      "id": 5,
+      "section_type": "content",
+      "title": "Respuesta a la duda inicial",
+      "narration": "Volviendo a tu pregunta sobre el obstáculo principal, la respuesta es la falta de estructura clara. La IA no sabe tu contexto emocional a menos que lo limites. Por eso, el tercer prompt es el Cierre de Valores. En lugar de preguntar simplemente qué te parece, la IA debe añadir una pregunta de descubrimiento. Esta pregunta obliga al prospecto a pensar, no a dar un no rápido. Es la diferencia entre una interacción transaccional y una de relación. Ahí radica la verdadera conversión de leads a clientes fieles.",
+      "image_query": "question mark hologram over business meeting table",
+      "image_query_2": "hand pointing at important text on screen",
+      "image_query_3": "deep thinking professional in modern office",
+      "bullet_points": [],
+      "caption_text": "",
+      "duration_seconds": 50
+    },
+    {
+      "id": 6,
+      "section_type": "re_hook",
+      "title": "Aplicación inmediata",
+      "narration": "Ahora te muestro cómo aplicar esto en TU trabajo HOY. No necesitas ser experto en tecnología ni en ventas para usar esto. Solo necesitas copiar estos tres bloques de texto pegables. El primero actúa como filtro, el segundo como seleccionador de tono, y el tercero como catalizador. Al limitar lo que la IA debe y no decir, conviertes un texto genérico en una herramienta de alto nivel. La diferencia entre un robot y un asistente es precisamente esa restricción. Tu productividad se multiplica cuando automatizas la creatividad.",
+      "image_query": "copy paste action on computer screen",
+      "image_query_2": "checklist of tasks being completed digitally",
+      "image_query_3": "efficient workflow diagram on office wall",
+      "bullet_points": [],
+      "caption_text": "",
+      "duration_seconds": 50
+    },
+    {
+      "id": 7,
+      "section_type": "content",
+      "title": "El asistente de élite",
+      "narration": "Imagina que cada correo tuyo tiene la consistencia de una agencia de marketing grande. Los prospectos empiezan a percibirte como alguien organizado y serio. Eso construye confianza antes incluso de una primera reunión. Al eliminar el sesgo emocional, mantienes la frecuencia de contacto ideal. La verdadera ganancia no es solo el tiempo, es la reputación. Un profesional que no pierde el hilo es un profesional que cierra deals. ¿Estás listo para dejar de depender de tu ánimo del día para escribir?",
+      "image_query": "professional looking confident at office window",
+      "image_query_2": "high-end office interior with plants and light",
+      "image_query_3": "digital hand holding virtual trophy or star",
+      "bullet_points": [],
+      "caption_text": "",
+      "duration_seconds": 45
+    },
+    {
+      "id": 8,
+      "section_type": "conclusion",
+      "title": "Tu ventaja competitiva",
+      "narration": "Recuerda, tu nueva arma no es la IA, son tus restricciones bien definidas. Hemos visto cómo el contexto, la tónica y el cierre cambian todo. No es magia, es ingeniería de prompts aplicada a tu rutina diaria. Si aplicas esto, tu tasa de respuesta hará inveirtir a tus colegas. La pregunta es: ¿cuántos seguimientos has dejado en el limbo este mes? Escribe en los comentarios ese número y cuéntame tu experiencia con la IA en ventas.",
+      "image_query": "person writing in notebook by desk lamp",
+      "image_query_2": "comment section with many replies screen",
+      "image_query_3": "lightbulb turning on in dark room",
+      "bullet_points": [],
+      "caption_text": "",
+      "duration_seconds": 45
+    },
+    {
+      "id": 9,
+      "section_type": "cta",
+      "title": "Unete a la comunidad",
+      "narration": "Si quieres más trucos de IA para tu oficina, suscríbete ahora al canal. Activando la campanita te evitarás perder el próximo tutorial práctico. Dime en los comentarios: ¿cuál de los tres prompts vas a probar primero? Me encantará leer tus resultados en algunas semanas. Nos vemos en el próximo video.",
+      "image_query

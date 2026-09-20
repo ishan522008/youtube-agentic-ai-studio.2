@@ -45,11 +45,12 @@ def run():
 
     # ── 2. Script ─────────────────────────────────────────────
     banner("2 / 6  ·  Writing script  [Gemini]")
-    script = write_script(research)
+    video_type = os.getenv("VIDEO_TYPE", "normal").strip().lower()
+    print(f"\n   → VIDEO_TYPE solicitado: {video_type}")
+    script = write_script(research, video_type=video_type)
     print(f"\n  ✅  {len(script['sections'])} sections written")
     for s in script["sections"]:
         words = len(s.get("narration", "").split())
-        # Safely grab the title, or default to "Untitled" if the AI forgot it
         title = s.get("title", "Untitled") 
         print(f"      [{s.get('id', 9):02d}] {title:<42} {words:3d} words")
     with open(f"{config.OUTPUT_DIR}/script.json", "w") as f:

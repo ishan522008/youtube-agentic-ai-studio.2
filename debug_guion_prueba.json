@@ -1,0 +1,124 @@
+{
+  "title": "Analiza Excel con Claude: 1 Hora de Trabajo en 5 Minutos",
+  "description": "Aprende a usar Claude para analizar archivos Excel sin programar y automatiza tus informes ejecutivos. Transforma horas de trabajo manual en minutos de inteligencia artificial pura para tu carrera profesional.",
+  "tags": [
+    "Claude AI",
+    "Excel para principiantes",
+    "Inteligencia Artificial",
+    "Analisis de datos",
+    "Productividad",
+    "Automatizacion",
+    "Tutoriales IA",
+    "Herramientas de oficina"
+  ],
+  "sections": [
+    {
+      "id": 1,
+      "section_type": "hook",
+      "title": "El Fin del Dolor con Excel",
+      "narration": "Deja de perder horas peleando con formulas que no entiendes. ¿Qué pasa cuando le pides a una IA que te explique por qué tu empresa perdió dinero el último trimestre usando solo tu hoja de cálculo? La respuesta es un cambio radical en tu forma de trabajar. No necesitas ser un experto en datos, solo necesitas saber pedir lo correcto a la máquina. Esto no es ciencia ficción, es tu herramienta de trabajo de hoy.",
+      "image_query": "excel spreadsheet data analysis",
+      "image_query_2": "person frustrated at computer office",
+      "image_query_3": "AI chat interface screen closeup",
+      "bullet_points": [],
+      "caption_text": "",
+      "duration_seconds": 45
+    },
+    {
+      "id": 2,
+      "section_type": "intro",
+      "title": "El Problema Real",
+      "narration": "La mayoría de los profesionales de oficina pierden tiempo formateando celdas en lugar de pensar en estrategia. ¿Por qué seguimos usando fórmulas complejas cuando podemos simplemente preguntar lo que necesitamos? Esa es la pregunta clave que responderemos al final de este video. Hoy te mostraré cómo subir un archivo XLSX directamente a Claude y obtener respuestas claras. Prometo que al terminar, tu flujo de trabajo será completamente diferente.",
+      "image_query": "business professional using laptop",
+      "image_query_2": "excel spreadsheet numbers screen",
+      "image_query_3": "data analytics dashboard charts",
+      "bullet_points": [],
+      "caption_text": "",
+      "duration_seconds": 45
+    },
+    {
+      "id": 3,
+      "section_type": "content",
+      "title": "Sube Tu Archivo",
+      "narration": "Piensa en Claude como un asistente que puede leer tus números sin despeinarse. Primero, simplemente arrastras y sueltas tu archivo de Excel en la ventana de chat. Luego, escribes en lenguaje natural: analiza estas ventas por región y dame el total. Claude procesa los datos en segundos sin que toques una sola celda. Es como tener un analista de datos trabajando en paralelo contigo.",
+      "image_query": "hands typing on laptop keyboard closeup",
+      "image_query_2": "excel formulas spreadsheet closeup",
+      "image_query_3": "person working office desk screen",
+      "bullet_points": [],
+      "caption_text": "",
+      "duration_seconds": 50
+    },
+    {
+      "id": 4,
+      "section_type": "re_hook",
+      "title": "El Truco Oculto",
+      "narration": "Pero espera, aqui esta el truco que nadie te dice. No le pidas a Claude que calcule, pídele que interprete el porqué detrás de los números. Pide que genere la media y la desviación estándar para identificar volatilidad. Esto te da contexto estadístico sin conocer ninguna fórmula de Excel. Es la diferencia entre ver datos y entender el comportamiento del mercado. Tu hoja de cálculo se convierte en un informe interpretativo al instante.",
+      "image_query": "light bulb moment idea closeup",
+      "image_query_2": "surprised person laptop screen",
+      "image_query_3": "AI assistant interface glowing screen",
+      "bullet_points": [],
+      "caption_text": "",
+      "duration_seconds": 50
+    },
+    {
+      "id": 5,
+      "section_type": "content",
+      "title": "Patrones Ocultos",
+      "narration": "Respondiendo a la pregunta inicial, sí puedes encontrar la causa de las pérdidas. Claude identifica anomalías y patrones ocultos que Excel no muestra a simple vista. Pide que destaque las celdas con valores fuera de lo normal. Te dirá exactamente qué fecha o categoría está tirando las métricas al piso. Esto te ahorra días de búsqueda manual a través de miles de filas. Es una limpieza de datos inteligente y automática.",
+      "image_query": "AI prompt typed on screen closeup",
+      "image_query_2": "excel data transformation before after",
+      "image_query_3": "professional presenting data screen",
+      "bullet_points": [],
+      "caption_text": "",
+      "duration_seconds": 50
+    },
+    {
+      "id": 6,
+      "section_type": "re_hook",
+      "title": "Aplicacion Inmediata",
+      "narration": "Ahora te muestro como aplicar esto en TU trabajo HOY. Olvide los informes largos y aburridos que nadie lee. Pídele a Claude que redacte un informe ejecutivo basado en los datos que acabas de analizar. En segundos tendrás un resumen claro con acciones recomendadas para la gerencia. Esto transforma horas de redacción tediosa en minutos de estrategia pura. Tu jefo verá el cambio en la calidad de tus reportes de inmediato.",
+      "image_query": "office worker productive computer",
+      "image_query_2": "hand clicking mouse computer",
+      "image_query_3": "professional saving time dashboard",
+      "bullet_points": [],
+      "caption_text": "",
+      "duration_seconds": 50
+    },
+    {
+      "id": 7,
+      "section_type": "content",
+      "title": "Nuevo Rol Profesional",
+      "narration": "Esto te transforma de un simple procesador de datos a un verdadero interprete de negocios. Ya no eres el que mueve celdas, eres el que da sentido a la información. La IA hace el trabajo pesado de los números, tú pones el criterio estratégico. ¿Cuánto vale tu tiempo cuando puedes dedicar menos horas a tareas repetitivas? Ese tiempo extra es para tomar decisiones que impulsan la empresa hacia adelante.",
+      "image_query": "professional career growth laptop",
+      "image_query_2": "modern office team working",
+      "image_query_3": "futuristic AI workplace concept",
+      "bullet_points": [],
+      "caption_text": "",
+      "duration_seconds": 45
+    },
+    {
+      "id": 8,
+      "section_type": "conclusion",
+      "title": "Tu Nuevo Flujo",
+      "narration": "Recuerda el gancho inicial: la IA explica la pérdida de dinero usando solo tu hoja de cálculo. Ya no necesitas ser un programador para dominar el análisis de datos. Claude es tu aliado para la eficiencia inmediata y la claridad estratégica. La pregunta que te dejé al inicio ahora tiene respuesta práctica. ¿Estás listo para dejar de pelear con las fórmulas y empezar a liderar con datos?",
+      "image_query": "success achievement laptop celebration",
+      "image_query_2": "person satisfied working computer",
+      "image_query_3": "forward looking future office technology",
+      "bullet_points": [],
+      "caption_text": "",
+      "duration_seconds": 45
+    },
+    {
+      "id": 9,
+      "section_type": "cta",
+      "title": "Unete al Canal",
+      "narration": "Si quieres dominar estas herramientas, suscribete al canal y activa la campana. Cuéntame en los comentarios qué tarea repetitiva de Excel odias más. Compartimos soluciones prácticas cada semana para profesionales de oficina. Tu carrera avanzará más rápido si dejas de hacer lo que la máquina ya sabe hacer.",
+      "image_query": "youtube subscribe button animation",
+      "image_query_2": "audience community engagement screen",
+      "image_query_3": "laptop with youtube channel dashboard",
+      "bullet_points": [],
+      "caption_text": "",
+      "duration_seconds": 30
+    }
+  ]
+}
